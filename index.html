@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cessna Learner Lab v2.1</title>
+  <title>Cessna Learner Lab v2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Chart.js for graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -379,12 +379,10 @@
 
     .chart-container {
       margin-top: 10px;
-      padding: 6px 8px 4px;
+      padding: 8px;
       border-radius: 1rem;
       background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(15,23,42,0.92));
       border: 1px solid rgba(51,65,85,0.95);
-      /* Smaller, more compressed graph area */
-      height: 160px;
     }
 
     .chart-caption {
@@ -392,7 +390,7 @@
       justify-content: space-between;
       font-size: 0.7rem;
       color: var(--muted);
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       gap: 8px;
       flex-wrap: wrap;
     }
@@ -587,21 +585,18 @@
   <header>
     <div class="title">
       <h1>
-        Cessna Learner Lab v2.1
+        Cessna Learner Lab v2
         <span class="badge">Interactive trainer</span>
       </h1>
-      <p>
-        Play with simple airplane models. Change weight, speed, wing size, and flaps to see how lift,
-        drag, stall speed, and efficiency change.
-      </p>
+      <p>Experiment with different light aircraft. Adjust parameters, see the math, and watch lift, drag, wing loading & stall speed change in real time.</p>
     </div>
     <div class="meta">
       <div class="pill">
         <span class="dot"></span>
-        Live Simulation · High school friendly
+        Live Simulation · Aerodynamics 101–201
       </div>
       <div class="pill">
-        ✈ Cessna 172 · Piper PA-28 · Glider
+        ✈ For students · High school / early university
       </div>
     </div>
   </header>
@@ -613,18 +608,18 @@
         <h2>
           Flight Model Playground
           <span style="font-size:0.7rem; color: var(--muted);">
-            These numbers are for learning only, not real flying.
+            Educational approximations only – not for real-world flying.
           </span>
         </h2>
 
         <div class="chip-row">
           <div class="chip" id="modelChip">
             <span class="chip-dot"></span>
-            <strong>Aircraft:</strong>
+            <strong>Model:</strong>
             <span id="modelChipText">Cessna 172</span>
           </div>
           <div class="chip">
-            Air density ρ: <strong>1.225 kg/m³</strong> (sea level)
+            ρ (air density): <strong>1.225 kg/m³</strong>
           </div>
           <div class="chip">
             Lift: <code style="font-size:0.72rem;">L = ½ ρ V² S C<sub>L</sub></code>
@@ -639,8 +634,8 @@
           <div>
             <div class="field-group">
               <label>
-                Choose an aircraft
-                <span class="hint">Each feels a bit different</span>
+                Aircraft preset
+                <span class="hint">Switch between simple aircraft types</span>
               </label>
             </div>
             <div class="btn-row">
@@ -654,7 +649,7 @@
               </button>
               <button class="preset" id="btnGlider">
                 Basic glider
-                <span>long wings</span>
+                <span>high aspect ratio</span>
               </button>
             </div>
 
@@ -664,8 +659,972 @@
             <div class="field-group">
               <label for="weightInput">
                 Weight
-                <span class="hint">How heavy the airplane + people + fuel is</span>
+                <span class="hint">Total mass of aircraft + people + fuel</span>
               </label>
               <input type="range" id="weightSlider" min="600" max="1300" step="10" value="1100">
               <div class="value-row">
                 <span id="weightDisplay">1100 kg</span>
+                <span>~ 2,425 lb</span>
+              </div>
+              <input type="number" id="weightInput" min="600" max="1300" step="10" value="1100">
+            </div>
+
+            <!-- Wing area -->
+            <div class="field-group">
+              <label for="wingInput">
+                Wing area
+                <span class="hint">Total lifting surface (S)</span>
+              </label>
+              <input type="range" id="wingSlider" min="12" max="20" step="0.1" value="16.2">
+              <div class="value-row">
+                <span id="wingDisplay">16.2 m²</span>
+                <span>~ 174 ft²</span>
+              </div>
+              <input type="number" id="wingInput" min="12" max="20" step="0.1" value="16.2">
+            </div>
+
+            <!-- Speed -->
+            <div class="field-group">
+              <label for="speedInput">
+                Airspeed
+                <span class="hint">Speed through the air (true)</span>
+              </label>
+              <input type="range" id="speedSlider" min="20" max="80" step="1" value="40">
+              <div class="value-row">
+                <span id="speedDisplay">40 m/s</span>
+                <span>~ 78 kt</span>
+              </div>
+              <input type="number" id="speedInput" min="20" max="80" step="1" value="40">
+            </div>
+
+            <!-- Angle of attack -->
+            <div class="field-group">
+              <label for="aoaInput">
+                Angle of attack
+                <span class="hint">Wing tilt relative to oncoming air</span>
+              </label>
+              <input type="range" id="aoaSlider" min="-4" max="20" step="0.5" value="5">
+              <div class="value-row">
+                <span id="aoaDisplay">5°</span>
+                <span>Approach / climb</span>
+              </div>
+              <input type="number" id="aoaInput" min="-4" max="20" step="0.5" value="5">
+            </div>
+
+            <!-- Flaps -->
+            <div class="field-group">
+              <label for="flapsSelect">
+                Flaps setting
+                <span class="hint">Increases lift & drag</span>
+              </label>
+              <select id="flapsSelect">
+                <option value="0">Flaps 0° (clean)</option>
+                <option value="10">Flaps 10° (take-off)</option>
+                <option value="20">Flaps 20°</option>
+                <option value="30">Flaps 30° (landing)</option>
+              </select>
+            </div>
+
+            <div class="btn-row" style="margin-top:8px;">
+              <button class="main" id="btnExplain">
+                Explain this scenario
+              </button>
+            </div>
+          </div>
+
+          <!-- Outputs / Graph -->
+          <div>
+            <div class="stat-grid">
+              <div class="stat">
+                <div class="stat-label">Instantaneous lift</div>
+                <div class="stat-value">
+                  <span id="liftValue">0</span>
+                  <span class="stat-unit">kN</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="indicator" id="liftIndicator"></span>
+                  <span id="liftStatus">Below weight (descending)</span>
+                </div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Lift / Weight ratio</div>
+                <div class="stat-value">
+                  <span id="lwRatio">0.0</span>
+                  <span class="stat-unit"></span>
+                </div>
+                <div class="stat-pill">
+                  <span class="indicator warning" id="marginIndicator"></span>
+                  <span id="marginStatus">Margin to stall: –</span>
+                </div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Approx. stall AoA</div>
+                <div class="stat-value">
+                  <span id="stallAoA">15</span>
+                  <span class="stat-unit">deg</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="indicator danger"></span>
+                  <strong>Above this → wing stalls</strong>
+                </div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Stall speed (this config)</div>
+                <div class="stat-value">
+                  <span id="stallSpeed">0</span>
+                  <span class="stat-unit">m/s</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="indicator" id="stallSpeedIndicator"></span>
+                  <span id="stallSpeedStatus">Speed / stall ratio: –</span>
+                </div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Wing loading</div>
+                <div class="stat-value">
+                  <span id="wingLoadingValue">0</span>
+                  <span class="stat-unit">kg/m²</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="indicator" id="wingLoadingIndicator"></span>
+                  <span id="wingLoadingStatus">Typical trainer</span>
+                </div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">L/D estimate</div>
+                <div class="stat-value">
+                  <span id="ldValue">0</span>
+                  <span class="stat-unit"></span>
+                </div>
+                <div class="stat-pill">
+                  <span class="indicator" id="ldIndicator"></span>
+                  <span id="ldStatus">Efficiency: –</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <div class="chart-caption">
+                <span>
+                  <strong>Lift vs. Angle of Attack</strong> at current speed & wing area
+                </span>
+                <span id="graphSummary">
+                  Hover or drag to explore. Red point = current AoA.
+                </span>
+              </div>
+              <canvas id="liftChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Lessons & Parts -->
+    <section class="panel">
+      <div class="panel-inner">
+        <h2>
+          Lessons & Aircraft Parts
+          <span style="font-size:0.7rem; color: var(--muted);">
+            Click topics or labels to sync explanations with the simulation.
+          </span>
+        </h2>
+
+        <div class="lesson-tabs">
+          <button class="lesson-tab active" data-lesson="wings">Wings & Lift</button>
+          <button class="lesson-tab" data-lesson="weight">Weight & Balance</button>
+          <button class="lesson-tab" data-lesson="flaps">Flaps & Slow Flight</button>
+          <button class="lesson-tab" data-lesson="stall">Stall & AoA</button>
+          <button class="lesson-tab" data-lesson="drag">Drag & L/D</button>
+        </div>
+
+        <div class="lesson-body" id="lessonBody">
+          <!-- Filled by JS -->
+        </div>
+
+        <div class="lesson-keypoints" id="lessonPoints">
+          <!-- Filled by JS -->
+        </div>
+
+        <div class="aircraft-layout" style="margin-top:10px;">
+          <div class="plane-diagram">
+            <!-- Simple side-view sketch using SVG -->
+            <svg viewBox="0 0 260 110">
+              <!-- Fuselage -->
+              <rect x="55" y="50" width="110" height="18" rx="6" ry="6" fill="#111827" stroke="#4b5563" stroke-width="1" />
+              <!-- Cabin bump -->
+              <rect x="80" y="38" width="46" height="14" rx="6" ry="6" fill="#0f172a" stroke="#6b7280" stroke-width="1" />
+              <!-- Wing -->
+              <rect x="60" y="40" width="120" height="8" rx="3" fill="#111827" stroke="#64748b" stroke-width="1.2" />
+              <!-- Tailplane -->
+              <rect x="155" y="40" width="38" height="6" rx="3" fill="#111827" stroke="#64748b" stroke-width="1.1" />
+              <!-- Vertical tail -->
+              <path d="M188 40 L205 30 L205 46 L188 46 Z" fill="#111827" stroke="#64748b" stroke-width="1.1" />
+              <!-- Nose / engine -->
+              <rect x="45" y="52" width="18" height="14" rx="4" fill="#0f172a" stroke="#6b7280" stroke-width="1.1" />
+              <!-- Propeller -->
+              <line x1="42" y1="59" x2="30" y2="59" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" />
+              <!-- Main gear -->
+              <line x1="88" y1="68" x2="88" y2="78" stroke="#9ca3af" stroke-width="1.8" />
+              <circle cx="88" cy="80" r="4" fill="#111827" stroke="#9ca3af" stroke-width="1.2" />
+              <line x1="140" y1="68" x2="140" y2="78" stroke="#9ca3af" stroke-width="1.8" />
+              <circle cx="140" cy="80" r="4" fill="#111827" stroke="#9ca3af" stroke-width="1.2" />
+              <!-- Nose gear -->
+              <line x1="55" y1="66" x2="55" y2="76" stroke="#9ca3af" stroke-width="1.5" />
+              <circle cx="55" cy="78" r="3.5" fill="#111827" stroke="#9ca3af" stroke-width="1.1" />
+            </svg>
+
+            <div class="plane-label wing" data-part="wing">Wing (lift)</div>
+            <div class="plane-label tail" data-part="tail">Tail (stability)</div>
+            <div class="plane-label engine" data-part="engine">Engine & prop</div>
+            <div class="plane-label flaps" data-part="flaps">Flaps</div>
+            <div class="plane-label cg" data-part="cg">CG (balance)</div>
+          </div>
+
+          <div class="plane-detail">
+            <h3>Selected part</h3>
+            <div class="plane-detail-tag" id="partTag">
+              Wing · provides most of the lift
+            </div>
+            <p id="partDescription">
+              The wing is the main lifting surface. As air flows faster over and under it, pressure differences create an upward force called lift. In our model, changing wing area or angle of attack directly affects the lift equation.
+            </p>
+            <ul id="partBullets">
+              <li>Connected to: wing area <strong>S</strong>, angle of attack, flaps</li>
+              <li>Try increasing AoA → more lift (up to the stall point).</li>
+              <li>Try increasing wing area → more lift at the same speed.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // --- Core constants / helpers ---
+    const rho = 1.225; // kg/m^3, sea level standard
+
+    function degToRad(deg) {
+      return (deg * Math.PI) / 180;
+    }
+
+    /**
+     * Very simple lift curve model:
+     * CL = CL0 + CLα * alpha (rad), up to stall.
+     * Past stall, we drop CL quickly.
+     * Flaps: add a bit of CL across the board and slightly reduce stall AoA.
+     */
+    function computeCL(alphaDeg, flapsDeg) {
+      const alphaRad = degToRad(alphaDeg);
+      const CL0 = 0.2 + flapsDeg * 0.01; // base lift at 0° AoA
+      const CLalpha = 5.5; // per rad
+      const baseStall = 15; // deg
+      const stallAoA = baseStall - flapsDeg * 0.08; // more flaps → stall a bit earlier
+
+      if (alphaDeg <= stallAoA) {
+        return CL0 + CLalpha * alphaRad;
+      } else {
+        const alphaBeyond = alphaDeg - stallAoA;
+        const drop = 0.05 * alphaBeyond * alphaBeyond;
+        return (CL0 + CLalpha * degToRad(stallAoA)) - drop;
+      }
+    }
+
+    function computeLiftNewtons(V, S, CL) {
+      return 0.5 * rho * V * V * S * CL;
+    }
+
+    function kgToNewtons(massKg) {
+      return massKg * 9.81;
+    }
+
+    function computeCD(CL, model, S) {
+      const AR = (model.span * model.span) / S;
+      const k = 1 / (Math.PI * model.e * AR);
+      return model.cd0 + k * CL * CL;
+    }
+
+    // --- Aircraft models ---
+    const AIRCRAFT_MODELS = {
+      c172: {
+        name: "Cessna 172",
+        weightDefault: 1100,
+        weightMin: 800,
+        weightMax: 1200,
+        wingAreaDefault: 16.2,
+        span: 11.0,
+        cd0: 0.03,
+        e: 0.8,
+        typicalSpeed: 40
+      },
+      pa28: {
+        name: "Piper PA-28 (Cherokee)",
+        weightDefault: 1000,
+        weightMin: 750,
+        weightMax: 1150,
+        wingAreaDefault: 15.8,
+        span: 10.2,
+        cd0: 0.032,
+        e: 0.78,
+        typicalSpeed: 38
+      },
+      glider: {
+        name: "Basic glider",
+        weightDefault: 600,
+        weightMin: 400,
+        weightMax: 750,
+        wingAreaDefault: 16.0,
+        span: 17.0,
+        cd0: 0.02,
+        e: 0.9,
+        typicalSpeed: 30
+      }
+    };
+
+    let currentAircraftKey = "c172";
+
+    // --- DOM elements ---
+    const weightSlider = document.getElementById("weightSlider");
+    const weightInput = document.getElementById("weightInput");
+    const weightDisplay = document.getElementById("weightDisplay");
+
+    const wingSlider = document.getElementById("wingSlider");
+    const wingInput = document.getElementById("wingInput");
+    const wingDisplay = document.getElementById("wingDisplay");
+
+    const speedSlider = document.getElementById("speedSlider");
+    const speedInput = document.getElementById("speedInput");
+    const speedDisplay = document.getElementById("speedDisplay");
+
+    const aoaSlider = document.getElementById("aoaSlider");
+    const aoaInput = document.getElementById("aoaInput");
+    const aoaDisplay = document.getElementById("aoaDisplay");
+
+    const flapsSelect = document.getElementById("flapsSelect");
+
+    const liftValueEl = document.getElementById("liftValue");
+    const liftIndicator = document.getElementById("liftIndicator");
+    const liftStatus = document.getElementById("liftStatus");
+    const lwRatioEl = document.getElementById("lwRatio");
+    const marginIndicator = document.getElementById("marginIndicator");
+    const marginStatus = document.getElementById("marginStatus");
+    const stallAoAEl = document.getElementById("stallAoA");
+    const graphSummary = document.getElementById("graphSummary");
+
+    const stallSpeedEl = document.getElementById("stallSpeed");
+    const stallSpeedIndicator = document.getElementById("stallSpeedIndicator");
+    const stallSpeedStatus = document.getElementById("stallSpeedStatus");
+
+    const wingLoadingValueEl = document.getElementById("wingLoadingValue");
+    const wingLoadingIndicator = document.getElementById("wingLoadingIndicator");
+    const wingLoadingStatus = document.getElementById("wingLoadingStatus");
+
+    const ldValueEl = document.getElementById("ldValue");
+    const ldIndicator = document.getElementById("ldIndicator");
+    const ldStatus = document.getElementById("ldStatus");
+
+    const btnExplain = document.getElementById("btnExplain");
+    const btnC172 = document.getElementById("btnC172");
+    const btnPA28 = document.getElementById("btnPA28");
+    const btnGlider = document.getElementById("btnGlider");
+
+    const lessonTabs = document.querySelectorAll(".lesson-tab");
+    const lessonBody = document.getElementById("lessonBody");
+    const lessonPoints = document.getElementById("lessonPoints");
+
+    const planeLabels = document.querySelectorAll(".plane-label");
+    const partTag = document.getElementById("partTag");
+    const partDescription = document.getElementById("partDescription");
+    const partBullets = document.getElementById("partBullets");
+
+    const modelChipText = document.getElementById("modelChipText");
+
+    // --- Lessons content ---
+    const LESSONS = {
+      wings: {
+        body: `
+          <p><strong>Wings &amp; lift</strong></p>
+          <p>
+            Most of an aircraft&rsquo;s lift comes from the wings. As the wing moves through the air,
+            its shape and tilt (angle of attack) make the air speed up and slow down in different places.
+            That creates pressure differences and an upward force called <strong>lift</strong>.
+          </p>
+          <p>
+            Our model uses the classic lift equation:
+            <code>L = ½ ρ V² S C<sub>L</sub></code>.
+            When you change <em>airspeed</em>, <em>wing area</em>, or
+            <em>angle of attack</em>, you change the lift.
+          </p>
+        `,
+        points: [
+          "Increase V → lift grows with V², so a small speed change matters a lot.",
+          "Increase S (wing area) → lift increases linearly.",
+          "Increase AoA → C<sub>L</sub> rises until the wing stalls."
+        ]
+      },
+      weight: {
+        body: `
+          <p><strong>Weight &amp; balance</strong></p>
+          <p>
+            The aircraft&rsquo;s weight pulls it downward. For steady, level flight,
+            the <strong>lift</strong> from the wings must roughly equal <strong>weight</strong>.
+          </p>
+          <p>
+            When you increase the mass (weight) slider, the lift required for level flight goes up.
+            That means you may need more speed, more angle of attack, or both.
+          </p>
+          <p>
+            The <em>wing loading</em> (W/S) tells you how much weight each square meter of wing must support.
+            Trainers have moderate wing loading, while gliders are much lighter per m².
+          </p>
+        `,
+        points: [
+          "Lift &ge; weight → aircraft can climb or stay level.",
+          "Lift &lt; weight → aircraft will descend if nothing else changes.",
+          "Wing loading (W/S) connects weight and stall speed: heavier → higher stall speed."
+        ]
+      },
+      flaps: {
+        body: `
+          <p><strong>Flaps &amp; slow flight</strong></p>
+          <p>
+            Flaps are small hinged surfaces on the wing&rsquo;s trailing edge.
+            Lowering them increases the wing&rsquo;s curvature (camber), which
+            usually raises lift at low speeds but also increases drag.
+          </p>
+          <p>
+            In this model, flaps increase the lift coefficient
+            <code>C<sub>L</sub></code> but slightly reduce the angle where the wing stalls.
+            The stall speed box uses an approximate <code>C<sub>L,max</sub></code> to show how
+            flaps reduce stall speed.
+          </p>
+        `,
+        points: [
+          "More flaps → more lift at lower speeds, good for takeoff & landing.",
+          "More flaps → more drag, so the plane slows down more quickly.",
+          "Too much AoA with flaps down can still cause a stall."
+        ]
+      },
+      stall: {
+        body: `
+          <p><strong>Stall &amp; angle of attack</strong></p>
+          <p>
+            A <strong>stall</strong> happens when the wing exceeds a critical angle of attack.
+            The airflow separates, and lift suddenly drops.
+          </p>
+          <p>
+            In our model, lift increases with angle of attack until the stall angle,
+            then decreases after that. Watch what happens to the graph and the
+            <em>lift / weight</em> ratio as you slide AoA toward and beyond the stall point.
+          </p>
+          <p>
+            Stall speed depends on weight, wing area, and the maximum lift coefficient:
+            <code>V<sub>s</sub> = √(2W / (ρ S C<sub>L,max</sub>))</code>.
+          </p>
+        `,
+        points: [
+          "Approaching stall: in real aircraft you feel buffet / warning.",
+          "Past stall: lift falls, and the aircraft tends to pitch down.",
+          "Recovery: reduce AoA and add power (always with an instructor in real life)."
+        ]
+      },
+      drag: {
+        body: `
+          <p><strong>Drag &amp; L/D</strong></p>
+          <p>
+            Drag is the force that resists motion through the air. A common model in
+            performance calculations is the <em>parabolic drag polar</em>:
+            <code>C<sub>D</sub> = C<sub>D0</sub> + k C<sub>L</sub>²</code>.
+          </p>
+          <p>
+            Here, <code>C<sub>D0</sub></code> is the <em>zero-lift drag</em> (from fuselage, gear, etc.),
+            and <code>k = 1 / (π e AR)</code> depends on aspect ratio (AR) and efficiency factor e.
+            Gliders have high AR and small k, so they can reach high lift-to-drag ratios.
+          </p>
+          <p>
+            The <strong>L/D box</strong> shows the ratio of lift to drag for your current settings.
+            Higher L/D means a more aerodynamically efficient airplane and shallower glide angle.
+          </p>
+        `,
+        points: [
+          "Gliders: high AR → lower induced drag → high L/D.",
+          "Flaps and gear increase C<sub>D0</sub> → more drag at all speeds.",
+          "Best glide in real aircraft is usually near the speed that maximizes L/D."
+        ]
+      }
+    };
+
+    const PARTS = {
+      wing: {
+        tag: "Wing · provides most of the lift",
+        description: `
+          The wing turns forward motion into vertical lift. In this simulator,
+          changing wing area and angle of attack directly changes lift in the equation.
+          The wing, together with span, also sets aspect ratio and induced drag.
+        `,
+        bullets: [
+          "Linked to: wing area S, angle of attack, flaps.",
+          "Try: increase AoA while watching the lift graph.",
+          "Notice how L/D changes as you trade lift for drag."
+        ],
+        lesson: "wings"
+      },
+      tail: {
+        tag: "Tailplane · stability & pitch control",
+        description: `
+          The horizontal tail helps balance the aircraft around its center of gravity.
+          It can produce up or down force to keep the nose where the pilot wants it.
+        `,
+        bullets: [
+          "If CG moves forward/back, tail force must change to balance.",
+          "Tail affects how sensitive the airplane feels in pitch.",
+          "Improper balance can change how the airplane stalls."
+        ],
+        lesson: "weight"
+      },
+      engine: {
+        tag: "Engine & propeller · thrust",
+        description: `
+          The engine and propeller provide thrust to overcome drag.
+          More thrust lets the airplane climb or accelerate to higher speeds,
+          which then increases lift.
+        `,
+        bullets: [
+          "More thrust → more speed → more lift (through V² in the equation).",
+          "At idle power, lift may drop below weight and the airplane descends.",
+          "Jets and props have different thrust-vs-speed behavior (not fully modeled here)."
+        ],
+        lesson: "drag"
+      },
+      flaps: {
+        tag: "Flaps · extra lift at low speed",
+        description: `
+          Flaps change the wing shape to generate more lift at lower speeds.
+          That helps the aircraft take off and land on shorter runways,
+          but adds drag and slightly lowers the stall angle.
+        `,
+        bullets: [
+          "Select 0°, 10°, 20°, 30° and see how the stall AoA and stall speed change.",
+          "Notice the L/D box: heavy flaps settings reduce efficiency.",
+          "Use flaps mainly when you need slow, steep approaches."
+        ],
+        lesson: "flaps"
+      },
+      cg: {
+        tag: "Center of gravity (CG) · balance point",
+        description: `
+          The CG is where we can think of all the aircraft&rsquo;s mass as being concentrated.
+          Its position affects stability, control forces, and stall behavior.
+        `,
+        bullets: [
+          "Loading passengers and baggage moves the CG.",
+          "Too far aft → less stable, easier to over-rotate and stall.",
+          "Too far forward → hard to rotate or flare for landing."
+        ],
+        lesson: "weight"
+      }
+    };
+
+    // --- Chart.js setup ---
+    const ctx = document.getElementById("liftChart").getContext("2d");
+    let liftChart = null;
+
+    function buildChart(alphaArray, liftArray, currentAlpha, currentLift) {
+      if (liftChart) {
+        liftChart.destroy();
+      }
+
+      liftChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: alphaArray,
+          datasets: [
+            {
+              label: "Lift vs AoA",
+              data: liftArray,
+              tension: 0.25,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true
+            },
+            {
+              label: "Current AoA",
+              data: alphaArray.map((a) => (a === currentAlpha ? currentLift : null)),
+              borderWidth: 0,
+              pointRadius: 5,
+              pointHoverRadius: 6,
+              showLine: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Angle of attack (deg)"
+              },
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 7
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Lift (kN, approximate)"
+              },
+              ticks: {
+                callback: (value) => (value / 1000).toFixed(0)
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                filter: (item) => item.text !== "Lift vs AoA"
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const liftKN = ctx.parsed.y / 1000;
+                  return `Lift: ${liftKN.toFixed(1)} kN`;
+                }
+              }
+            }
+          },
+          elements: {
+            line: { borderColor: "rgba(148,163,184,0.9)" },
+            point: {
+              backgroundColor: "rgba(248,113,113,1)",
+              borderColor: "#fecaca"
+            }
+          }
+        }
+      });
+    }
+
+    // --- UI update logic ---
+    function syncSliderAndInput(slider, input, display, unit, transformDisplay) {
+      const value = parseFloat(slider.value);
+      input.value = value;
+      if (display) {
+        display.textContent = transformDisplay ? transformDisplay(value) : `${value} ${unit}`;
+      }
+    }
+
+    function computeAndRender() {
+      const weightKg = parseFloat(weightInput.value);
+      const wingArea = parseFloat(wingInput.value);
+      const speed = parseFloat(speedInput.value);
+      const aoa = parseFloat(aoaInput.value);
+      const flaps = parseFloat(flapsSelect.value);
+      const model = AIRCRAFT_MODELS[currentAircraftKey];
+
+      const stallBase = 15;
+      const stallAoA = stallBase - flaps * 0.08;
+      stallAoAEl.textContent = stallAoA.toFixed(1);
+
+      const CL = computeCL(aoa, flaps);
+      const liftN = computeLiftNewtons(speed, wingArea, CL);
+      const liftKN = liftN / 1000;
+      const weightN = kgToNewtons(weightKg);
+      const lwRatio = liftN / weightN;
+
+      liftValueEl.textContent = liftKN.toFixed(1);
+      lwRatioEl.textContent = lwRatio.toFixed(2);
+
+      // Lift vs weight status
+      const diff = lwRatio - 1;
+      if (diff > 0.15) {
+        liftIndicator.style.backgroundColor = "#22c55e";
+        liftIndicator.style.boxShadow = "0 0 8px rgba(34,197,94,0.8)";
+        liftStatus.textContent = "Lift above weight (climb / acceleration)";
+      } else if (diff > -0.15) {
+        liftIndicator.style.backgroundColor = "#eab308";
+        liftIndicator.style.boxShadow = "0 0 8px rgba(234,179,8,0.8)";
+        liftStatus.textContent = "Lift ≈ weight (near level flight)";
+      } else {
+        liftIndicator.style.backgroundColor = "#ef4444";
+        liftIndicator.style.boxShadow = "0 0 8px rgba(239,68,68,0.8)";
+        liftStatus.textContent = "Lift below weight (descending)";
+      }
+
+      // Margin to stall (AoA)
+      const margin = stallAoA - aoa;
+      if (margin > 5) {
+        marginIndicator.style.backgroundColor = "#22c55e";
+        marginStatus.textContent = `Comfortable margin: about ${margin.toFixed(1)}° below stall.`;
+      } else if (margin > 1) {
+        marginIndicator.style.backgroundColor = "#eab308";
+        marginStatus.textContent = `Caution: only ${margin.toFixed(1)}° below stall.`;
+      } else if (margin > 0) {
+        marginIndicator.style.backgroundColor = "#f97316";
+        marginStatus.textContent = `Very close: ~${margin.toFixed(1)}° below stall.`;
+      } else {
+        marginIndicator.style.backgroundColor = "#ef4444";
+        marginStatus.textContent = `Above modeled stall AoA by ${(-margin).toFixed(1)}°. Lift is dropping.`;
+      }
+
+      // Stall speed (using CL at stall AoA as CLmax)
+      const CLmax = computeCL(stallAoA, flaps);
+      let stallSpeed = NaN;
+      if (CLmax > 0) {
+        stallSpeed = Math.sqrt((2 * weightN) / (rho * wingArea * CLmax));
+        stallSpeedEl.textContent = stallSpeed.toFixed(1);
+        const ratio = speed / stallSpeed;
+        if (ratio > 1.3) {
+          stallSpeedIndicator.style.backgroundColor = "#22c55e";
+          stallSpeedStatus.textContent = `Comfortable: V ≈ ${(ratio).toFixed(2)} × Vₛ.`;
+        } else if (ratio > 1.15) {
+          stallSpeedIndicator.style.backgroundColor = "#eab308";
+          stallSpeedStatus.textContent = `Typical approach: V ≈ ${(ratio).toFixed(2)} × Vₛ.`;
+        } else if (ratio > 1.0) {
+          stallSpeedIndicator.style.backgroundColor = "#f97316";
+          stallSpeedStatus.textContent = `Very close: V ≈ ${(ratio).toFixed(2)} × Vₛ.`;
+        } else {
+          stallSpeedIndicator.style.backgroundColor = "#ef4444";
+          stallSpeedStatus.textContent = `Below modeled stall speed (V/Vₛ ≈ ${(ratio).toFixed(2)}).`;
+        }
+      } else {
+        stallSpeedEl.textContent = "–";
+        stallSpeedIndicator.style.backgroundColor = "#ef4444";
+        stallSpeedStatus.textContent = "CLmax invalid in this simple model.";
+      }
+
+      // Wing loading (kg/m²)
+      const wingLoading = weightKg / wingArea;
+      wingLoadingValueEl.textContent = wingLoading.toFixed(1);
+      if (wingLoading < 35) {
+        wingLoadingIndicator.style.backgroundColor = "#22c55e";
+        wingLoadingStatus.textContent = "Very low (glider-like)";
+      } else if (wingLoading < 55) {
+        wingLoadingIndicator.style.backgroundColor = "#22c55e";
+        wingLoadingStatus.textContent = "Typical light trainer";
+      } else if (wingLoading < 80) {
+        wingLoadingIndicator.style.backgroundColor = "#eab308";
+        wingLoadingStatus.textContent = "Heavier GA / touring";
+      } else {
+        wingLoadingIndicator.style.backgroundColor = "#ef4444";
+        wingLoadingStatus.textContent = "High wing loading (fast / demanding)";
+      }
+
+      // Drag and L/D
+      const q = 0.5 * rho * speed * speed;
+      const CD = computeCD(CL, model, wingArea);
+      const dragN = q * wingArea * CD;
+      let ld = 0;
+      if (dragN > 0) {
+        ld = liftN / dragN;
+      }
+      ldValueEl.textContent = ld.toFixed(1);
+      if (ld > 20) {
+        ldIndicator.style.backgroundColor = "#22c55e";
+        ldStatus.textContent = "Very efficient (high-performance glider-like).";
+      } else if (ld > 12) {
+        ldIndicator.style.backgroundColor = "#22c55e";
+        ldStatus.textContent = "Good efficiency (typical light aircraft cruise).";
+      } else if (ld > 8) {
+        ldIndicator.style.backgroundColor = "#eab308";
+        ldStatus.textContent = "Moderate efficiency (draggy config / flaps).";
+      } else {
+        ldIndicator.style.backgroundColor = "#ef4444";
+        ldStatus.textContent = "Low L/D (steep descent, lots of drag).";
+      }
+
+      graphSummary.textContent = `Model: ${model.name}. Speed ${speed.toFixed(0)} m/s, wing area ${wingArea.toFixed(1)} m², flaps ${flaps}°. Current AoA: ${aoa.toFixed(1)}°.`;
+
+      // Build AoA sweep for graph
+      const alphas = [];
+      const lifts = [];
+      for (let a = -4; a <= 20; a += 0.5) {
+        const cl = computeCL(a, flaps);
+        const L = computeLiftNewtons(speed, wingArea, cl);
+        alphas.push(parseFloat(a.toFixed(1)));
+        lifts.push(L);
+      }
+
+      buildChart(
+        alphas,
+        lifts,
+        parseFloat(aoa.toFixed(1)),
+        liftN
+      );
+    }
+
+    function updateStateFromInputs() {
+      syncSliderAndInput(weightSlider, weightInput, weightDisplay, "kg", (v) => `${v.toFixed(0)} kg`);
+      syncSliderAndInput(wingSlider, wingInput, wingDisplay, "m²", (v) => `${v.toFixed(1)} m²`);
+      syncSliderAndInput(speedSlider, speedInput, speedDisplay, "m/s", (v) => `${v.toFixed(0)} m/s`);
+      syncSliderAndInput(aoaSlider, aoaInput, aoaDisplay, "°", (v) => `${v.toFixed(1)}°`);
+
+      computeAndRender();
+    }
+
+    // --- Aircraft presets ---
+    function applyAircraft(key) {
+      const model = AIRCRAFT_MODELS[key];
+      if (!model) return;
+      currentAircraftKey = key;
+
+      // Update sliders to typical ranges & defaults
+      weightSlider.min = model.weightMin;
+      weightSlider.max = model.weightMax;
+      weightSlider.value = model.weightDefault;
+      weightInput.min = model.weightMin;
+      weightInput.max = model.weightMax;
+      weightInput.value = model.weightDefault;
+
+      wingSlider.value = model.wingAreaDefault;
+      wingInput.value = model.wingAreaDefault;
+
+      speedSlider.value = model.typicalSpeed;
+      speedInput.value = model.typicalSpeed;
+
+      // Visual feedback for active aircraft button
+      btnC172.classList.toggle("active", key === "c172");
+      btnPA28.classList.toggle("active", key === "pa28");
+      btnGlider.classList.toggle("active", key === "glider");
+
+      modelChipText.textContent = model.name;
+
+      updateStateFromInputs();
+    }
+
+    // --- Lessons render ---
+    function renderLesson(key) {
+      const lesson = LESSONS[key];
+      if (!lesson) return;
+
+      lessonBody.innerHTML = lesson.body;
+      lessonPoints.innerHTML = "";
+      lesson.points.forEach((p) => {
+        const div = document.createElement("div");
+        div.innerHTML = p;
+        lessonPoints.appendChild(div);
+      });
+
+      lessonTabs.forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.lesson === key);
+      });
+    }
+
+    // --- Parts render ---
+    function renderPart(key) {
+      const part = PARTS[key];
+      if (!part) return;
+      partTag.textContent = part.tag;
+      partDescription.innerHTML = part.description;
+
+      partBullets.innerHTML = "";
+      part.bullets.forEach((b) => {
+        const li = document.createElement("li");
+        li.innerHTML = b;
+        partBullets.appendChild(li);
+      });
+
+      planeLabels.forEach((label) => {
+        label.classList.toggle("active", label.dataset.part === key);
+      });
+
+      // Sync lesson with selected part
+      renderLesson(part.lesson);
+    }
+
+    // --- Explain scenario ---
+    btnExplain.addEventListener("click", () => {
+      const weightKg = parseFloat(weightInput.value);
+      const wingArea = parseFloat(wingInput.value);
+      const speed = parseFloat(speedInput.value);
+      const aoa = parseFloat(aoaInput.value);
+      const flaps = parseFloat(flapsSelect.value);
+      const model = AIRCRAFT_MODELS[currentAircraftKey];
+
+      const CL = computeCL(aoa, flaps);
+      const liftN = computeLiftNewtons(speed, wingArea, CL);
+      const liftKN = liftN / 1000;
+      const weightN = kgToNewtons(weightKg);
+      const lwRatio = liftN / weightN;
+
+      const stallBase = 15;
+      const stallAoA = stallBase - flaps * 0.08;
+      const CLmax = computeCL(stallAoA, flaps);
+      let stallSpeedText = "";
+      if (CLmax > 0) {
+        const stallSpeed = Math.sqrt((2 * weightN) / (rho * wingArea * CLmax));
+        stallSpeedText = `Approximate stall speed now is about ${stallSpeed.toFixed(1)} m/s. `;
+      }
+
+      let summary = `Aircraft: ${model.name}.\nWeight ${weightKg.toFixed(0)} kg, speed ${speed.toFixed(
+        0
+      )} m/s, AoA ${aoa.toFixed(1)}°, flaps ${flaps}°.\n\n`;
+
+      summary += `The wings are producing about ${liftKN.toFixed(
+        1
+      )} kN of lift. This gives a Lift/Weight ratio of about ${lwRatio.toFixed(
+        2
+      )}.\n`;
+
+      if (lwRatio > 1.15) {
+        summary += `Lift is well above weight, so the aircraft would tend to climb or accelerate in this simplified model.\n`;
+      } else if (lwRatio > 0.85) {
+        summary += `Lift is close to weight, so the aircraft could roughly maintain level flight if trimmed correctly.\n`;
+      } else {
+        summary += `Lift is below weight, so the aircraft would descend unless speed or angle of attack increases.\n`;
+      }
+
+      summary += `\n${stallSpeedText}Use the controls to see how changing weight, wing area, speed or flaps moves the stall speed and L/D ratio.`;
+
+      alert(summary);
+    });
+
+    // --- Event wiring ---
+    [
+      [weightSlider, weightInput, weightDisplay, "kg", (v) => `${v.toFixed(0)} kg`],
+      [wingSlider, wingInput, wingDisplay, "m²", (v) => `${v.toFixed(1)} m²`],
+      [speedSlider, speedInput, speedDisplay, "m/s", (v) => `${v.toFixed(0)} m/s`],
+      [aoaSlider, aoaInput, aoaDisplay, "°", (v) => `${v.toFixed(1)}°`]
+    ].forEach(([slider, input, display, unit, format]) => {
+      slider.addEventListener("input", () => {
+        syncSliderAndInput(slider, input, display, unit, format);
+        computeAndRender();
+      });
+      input.addEventListener("change", () => {
+        slider.value = input.value;
+        syncSliderAndInput(slider, input, display, unit, format);
+        computeAndRender();
+      });
+    });
+
+    flapsSelect.addEventListener("change", computeAndRender);
+
+    btnC172.addEventListener("click", () => applyAircraft("c172"));
+    btnPA28.addEventListener("click", () => applyAircraft("pa28"));
+    btnGlider.addEventListener("click", () => applyAircraft("glider"));
+
+    lessonTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        renderLesson(tab.dataset.lesson);
+      });
+    });
+
+    planeLabels.forEach((label) => {
+      label.addEventListener("click", () => {
+        renderPart(label.dataset.part);
+      });
+    });
+
+    // --- Initial load ---
+    applyAircraft("c172");
+    renderLesson("wings");
+    renderPart("wing");
+  </script>
+</body>
+</html>
